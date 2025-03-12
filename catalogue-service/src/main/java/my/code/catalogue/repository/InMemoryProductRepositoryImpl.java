@@ -1,9 +1,14 @@
-package my.code.repository;
+package my.code.catalogue.repository;
 
-import my.code.entity.Product;
+import my.code.catalogue.entity.Product;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class InMemoryProductRepositoryImpl implements ProductRepository {

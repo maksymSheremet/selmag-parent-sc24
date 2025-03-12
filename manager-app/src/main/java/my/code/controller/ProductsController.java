@@ -1,14 +1,12 @@
 package my.code.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import my.code.client.BadRequestException;
+import my.code.client.ProductRestClient;
 import my.code.controller.payload.NewProductPayload;
 import my.code.entity.Product;
-import my.code.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("catalogue/products")
 public class ProductsController {
 
-    private final ProductService productService;
+    private final ProductRestClient productRestClient;
 
     @GetMapping("list")
     public String getProductsList(Model model) {
-        model.addAttribute("products", this.productService.findAllProducts());
+        model.addAttribute("products", this.productRestClient.findAllProducts());
         return "catalogue/products/list";
     }
 
@@ -32,17 +30,14 @@ public class ProductsController {
     }
 
     @PostMapping("create")
-    public String createProduct(@Valid NewProductPayload payload, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
+    public String createProduct(NewProductPayload payload, Model model) {
+        try {
+            Product product = this.productRestClient.createProduct(payload.title(), payload.details());
+            return "redirect:/catalogue/products/%d".formatted(product.id());
+        } catch (BadRequestException exception) {
             model.addAttribute("payload", payload);
-            model.addAttribute("errors", bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage)
-                    .toArray()
-            );
+            model.addAttribute("errors", exception.getErrors());
             return "catalogue/products/new_product";
-        } else {
-            Product product = this.productService.createProduct(payload.title(), payload.details());
-            return "redirect:/catalogue/products/%d".formatted(product.getId());
         }
     }
 }
