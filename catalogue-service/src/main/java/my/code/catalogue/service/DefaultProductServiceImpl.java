@@ -1,8 +1,9 @@
-package my.code.service;
+package my.code.catalogue.service;
 
 import lombok.RequiredArgsConstructor;
-import my.code.entity.Product;
-import my.code.repository.ProductRepository;
+
+import my.code.catalogue.entity.Product;
+import my.code.catalogue.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

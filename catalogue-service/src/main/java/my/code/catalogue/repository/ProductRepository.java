@@ -1,6 +1,6 @@
-package my.code.repository;
+package my.code.catalogue.repository;
 
-import my.code.entity.Product;
+import my.code.catalogue.entity.Product;
 
 import java.util.List;
 import java.util.Optional;
