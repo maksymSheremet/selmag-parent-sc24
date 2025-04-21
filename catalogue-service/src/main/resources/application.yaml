@@ -9,6 +9,11 @@ spring:
       - catalogue
   jpa:
     show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8083/realms/selmag
 
 server:
   port: 8082
