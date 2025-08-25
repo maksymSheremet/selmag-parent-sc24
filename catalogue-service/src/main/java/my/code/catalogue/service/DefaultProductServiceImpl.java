@@ -1,13 +1,11 @@
 package my.code.catalogue.service;
 
 import lombok.RequiredArgsConstructor;
-
 import my.code.catalogue.entity.Product;
 import my.code.catalogue.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -16,7 +14,6 @@ import java.util.Optional;
 public class DefaultProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-
 
     @Override
     public Iterable<Product> findAllProducts(String filter) {

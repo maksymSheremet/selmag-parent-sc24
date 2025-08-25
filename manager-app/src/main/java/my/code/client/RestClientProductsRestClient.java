@@ -15,9 +15,11 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class RestClientProductsRestClient implements ProductRestClient {
+public class RestClientProductsRestClient implements ProductsRestClient {
 
-    private static final ParameterizedTypeReference<List<Product>> PRODUCTS_TYPE_REFERENCE = new ParameterizedTypeReference<>() {};
+    private static final ParameterizedTypeReference<List<Product>> PRODUCTS_TYPE_REFERENCE =
+            new ParameterizedTypeReference<>() {
+            };
     private final RestClient restClient;
 
     @Override
@@ -33,12 +35,11 @@ public class RestClientProductsRestClient implements ProductRestClient {
         try {
             return this.restClient
                     .post()
-                    .uri("catalogue-api/products")
+                    .uri("/catalogue-api/products")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new NewProductPayload(title, details))
                     .retrieve()
                     .body(Product.class);
-
         } catch (HttpClientErrorException.BadRequest exception) {
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
             throw new BadRequestException((List<String>) problemDetail.getProperties().get("errors"));
@@ -76,7 +77,7 @@ public class RestClientProductsRestClient implements ProductRestClient {
     @Override
     public void deleteProduct(int productId) {
         try {
-             this.restClient.delete()
+            this.restClient.delete()
                     .uri("catalogue-api/products/{productId}", productId)
                     .retrieve()
                     .toBodilessEntity();

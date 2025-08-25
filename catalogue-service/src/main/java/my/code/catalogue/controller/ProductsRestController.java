@@ -9,15 +9,19 @@ import my.code.catalogue.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("catalogue-api/products")
 @RequiredArgsConstructor
+@RequestMapping("catalogue-api/products")
 public class ProductsRestController {
 
     private final ProductService productService;
@@ -28,7 +32,7 @@ public class ProductsRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProduct(@Valid @RequestBody NewProductPayload payload,
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody NewProductPayload payload,
                                            BindingResult bindingResult,
                                            UriComponentsBuilder uriBuilder) throws BindException {
         if (bindingResult.hasErrors()) {

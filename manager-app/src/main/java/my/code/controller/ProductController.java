@@ -3,7 +3,7 @@ package my.code.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import my.code.client.BadRequestException;
-import my.code.client.ProductRestClient;
+import my.code.client.ProductsRestClient;
 import my.code.controller.payload.UpdateProductPayload;
 import my.code.entity.Product;
 import org.springframework.context.MessageSource;
@@ -20,12 +20,12 @@ import java.util.NoSuchElementException;
 @RequestMapping("catalogue/products/{productId:\\d+}")
 public class ProductController {
 
-    private final ProductRestClient productRestClient;
+    private final ProductsRestClient productsRestClient;
     private final MessageSource messageSource;
 
     @ModelAttribute("product")
     public Product product(@PathVariable("productId") int productId) {
-        return this.productRestClient.findProduct(productId)
+        return this.productsRestClient.findProduct(productId)
                 .orElseThrow(() -> new NoSuchElementException("catalogue.errors.product.not_found"));
     }
 
@@ -43,11 +43,13 @@ public class ProductController {
     @PostMapping("edit")
     public String updateProduct(@ModelAttribute(name = "product", binding = false) Product product,
                                 UpdateProductPayload payload,
-                                Model model) {
+                                Model model,
+                                HttpServletResponse response) {
         try {
-            this.productRestClient.updateProduct(product.id(), payload.title(), payload.details());
+            this.productsRestClient.updateProduct(product.id(), payload.title(), payload.details());
             return "redirect:/catalogue/products/%d".formatted(product.id());
         } catch (BadRequestException exception) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             model.addAttribute("payload", payload);
             model.addAttribute("errors", exception.getErrors());
             return "catalogue/products/edit";
@@ -56,7 +58,7 @@ public class ProductController {
 
     @PostMapping("delete")
     public String deleteProduct(@ModelAttribute("product") Product product) {
-        this.productRestClient.deleteProduct(product.id());
+        this.productsRestClient.deleteProduct(product.id());
         return "redirect:/catalogue/products/list";
     }
 
