@@ -9,7 +9,7 @@ selmag:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5436/manager
+    url: jdbc:postgresql://localhost:5434/manager
     username: manager
     password: manager
   security:
@@ -22,7 +22,7 @@ spring:
         registration:
           keycloak:
             client-id: manager-app
-            client-secret: JwByKV4Y8m95GDYTNqJH6jfaj5dXpv8F
+            client-secret: OsfVAMFZY9TjCWzjV7sKMwqEHA6Av3YK
             scope:
               - openid
               - view_catalogue

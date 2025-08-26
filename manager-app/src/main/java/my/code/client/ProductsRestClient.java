@@ -5,7 +5,7 @@ import my.code.entity.Product;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductRestClient {
+public interface ProductsRestClient {
 
     List<Product> findAllProducts(String filter);
 

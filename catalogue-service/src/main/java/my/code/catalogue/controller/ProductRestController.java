@@ -11,14 +11,22 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("catalogue-api/products/{productId:\\d+}")
 @RequiredArgsConstructor
+@RequestMapping("catalogue-api/products/{productId:\\d+}")
 public class ProductRestController {
     private final ProductService productService;
     private final MessageSource messageSource;
@@ -29,16 +37,15 @@ public class ProductRestController {
                 .orElseThrow(() -> new NoSuchElementException("catalogue.errors.product.not_found"));
     }
 
-
     @GetMapping
     public Product findProduct(@ModelAttribute("product") Product product) {
         return product;
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateProduct(@PathVariable("productId") int productId,
-                                           @Valid @RequestBody UpdateProductPayload payload,
-                                           BindingResult bindingResult) throws BindException {
+    public ResponseEntity<Void> updateProduct(@PathVariable("productId") int productId,
+                                              @Valid @RequestBody UpdateProductPayload payload,
+                                              BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) {
                 throw exception;

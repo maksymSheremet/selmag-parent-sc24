@@ -1,11 +1,12 @@
 package my.code.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import my.code.client.BadRequestException;
-import my.code.client.ProductRestClient;
+import my.code.client.ProductsRestClient;
 import my.code.controller.payload.NewProductPayload;
 import my.code.entity.Product;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,21 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
-import java.util.logging.Logger;
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("catalogue/products")
 public class ProductsController {
 
-    private final ProductRestClient productRestClient;
+    private final ProductsRestClient productsRestClient;
 
     @GetMapping("list")
-    public String getProductsList(Model model, @RequestParam(name = "filter", required = false) String filter,
-                                  Principal principal) {
-        LoggerFactory.getLogger(ProductsController.class).info("User: {}", principal);
-        model.addAttribute("products", this.productRestClient.findAllProducts(filter));
+    public String getProductsList(Model model,
+                                  @RequestParam(name = "filter", required = false) String filter) {
+        model.addAttribute("products", this.productsRestClient.findAllProducts(filter));
         model.addAttribute("filter", filter);
         return "catalogue/products/list";
     }
@@ -38,11 +35,14 @@ public class ProductsController {
     }
 
     @PostMapping("create")
-    public String createProduct(NewProductPayload payload, Model model) {
+    public String createProduct(NewProductPayload payload,
+                                Model model,
+                                HttpServletResponse response) {
         try {
-            Product product = this.productRestClient.createProduct(payload.title(), payload.details());
+            Product product = this.productsRestClient.createProduct(payload.title(), payload.details());
             return "redirect:/catalogue/products/%d".formatted(product.id());
         } catch (BadRequestException exception) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             model.addAttribute("payload", payload);
             model.addAttribute("errors", exception.getErrors());
             return "catalogue/products/new_product";

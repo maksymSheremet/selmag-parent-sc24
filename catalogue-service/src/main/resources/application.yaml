@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5435/catalogue
+    url: jdbc:postgresql://localhost:5433/catalogue
     username: catalogue
     password: catalogue
   flyway:
